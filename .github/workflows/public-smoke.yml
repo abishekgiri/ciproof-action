@@ -1,0 +1,41 @@
+name: Public smoke
+
+# Manually verifies the action against a specific published CIProof version from
+# the public npm registry, on all supported operating systems. Publishes
+# nothing and requires no secrets.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ciproof-version:
+        description: CIProof package version to test (e.g. 0.1.0)
+        required: true
+        default: "0.1.0"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Refuted fixture with the requested version
+        id: refuted
+        uses: ./
+        with:
+          command: check
+          ciproof-version: ${{ inputs.ciproof-version }}
+          working-directory: test/fixtures/refuted
+          fail-on-refuted: false
+
+      - name: Assert refuted
+        shell: bash
+        run: |
+          test "${{ steps.refuted.outputs.verdict }}" = "refuted" \
+            || { echo "expected refuted, got '${{ steps.refuted.outputs.verdict }}'"; exit 1; }

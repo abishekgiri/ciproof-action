@@ -1,0 +1,76 @@
+name: CIProof
+description: Behavioral verification for GitHub Actions with concrete counterexamples.
+author: Abishek Giri
+
+branding:
+  icon: shield
+  color: purple
+
+inputs:
+  command:
+    description: 'CIProof command to run: "check" or "diff".'
+    required: false
+    default: check
+  ciproof-version:
+    description: >-
+      Version of the CIProof npm package to run. An exact version (e.g. 0.1.0)
+      is recommended for reproducibility; "latest" is also accepted. The action
+      version and the CIProof CLI version are independent.
+    required: false
+    default: 0.1.0
+  revisions:
+    description: >-
+      Git revision range for `command: diff`, e.g. origin/main...HEAD. The base
+      revision must be present in the checkout (use actions/checkout with
+      fetch-depth: 0).
+    required: false
+    default: origin/main...HEAD
+  fail-on-refuted:
+    description: >-
+      Fail the job when CIProof refutes an invariant (a concrete counterexample
+      exists). Defaults to true so a real violation fails CI.
+    required: false
+    default: "true"
+  fail-on-unknown:
+    description: >-
+      Fail the job when CIProof reports UNKNOWN (analysis incomplete). Defaults
+      to false; UNKNOWN remains visible in the summary and annotations but does
+      not fail the job unless enabled. UNKNOWN is not a pass.
+    required: false
+    default: "false"
+  comment:
+    description: >-
+      Post (or update) a CIProof summary comment on the pull request. Requires
+      `pull-requests: write`. Best-effort: when the token is read-only (e.g. a
+      fork pull request) the comment is skipped with a notice and the analysis
+      still runs.
+    required: false
+    default: "false"
+  github-token:
+    description: >-
+      Token used to post PR comments. Defaults to the workflow token. A personal
+      access token is not required.
+    required: false
+    default: ${{ github.token }}
+  working-directory:
+    description: Directory to analyze. Defaults to the repository root.
+    required: false
+    default: "."
+
+outputs:
+  verdict:
+    description: "One of: refuted, unknown, clean, error."
+  refuted-count:
+    description: Number of refuted invariants.
+  unknown-count:
+    description: Number of UNKNOWN findings.
+  passed-count:
+    description: Number of invariants that passed within the modeled scenarios.
+  report-json:
+    description: >-
+      The CIProof JSON v1 report, when small enough to expose safely; empty
+      otherwise (the job summary carries the detail).
+
+runs:
+  using: node24
+  main: dist/index.js

@@ -1,0 +1,6 @@
+version: 1
+invariants:
+  - id: deploy-needs-tests
+    require:
+      when-job-runs: deploy
+      job-must-have-run: tests

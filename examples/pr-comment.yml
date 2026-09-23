@@ -1,0 +1,22 @@
+# CIProof check that also posts (and updates) a summary comment on the pull
+# request. Requires pull-requests: write. On fork pull requests the token is
+# read-only, so the comment is skipped with a notice and the analysis still runs.
+name: CIProof
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  ciproof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: abishekgiri/ciproof-action@v1
+        with:
+          command: check
+          comment: true
