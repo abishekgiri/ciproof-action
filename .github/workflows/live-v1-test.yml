@@ -1,0 +1,48 @@
+name: Live v1 test
+
+# Temporary end-to-end verification of the published action via its PUBLIC
+# reference (abishekgiri/ciproof-action@v1) — not a local path. Exercises clean
+# and refuted analysis, the job summary, outputs, and PR commenting. This file
+# and its branch are removed after verification.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Clean analysis via public @v1
+        id: clean
+        uses: abishekgiri/ciproof-action@v1
+        with:
+          command: check
+          working-directory: test/fixtures/clean
+
+      - name: Assert clean verdict
+        run: |
+          test "${{ steps.clean.outputs.verdict }}" = "clean" \
+            || { echo "expected clean, got '${{ steps.clean.outputs.verdict }}'"; exit 1; }
+
+      - name: Refuted analysis + PR comment via public @v1
+        id: refuted
+        uses: abishekgiri/ciproof-action@v1
+        with:
+          command: check
+          working-directory: test/fixtures/refuted
+          fail-on-refuted: false
+          comment: true
+
+      - name: Assert refuted verdict and outputs
+        run: |
+          test "${{ steps.refuted.outputs.verdict }}" = "refuted" \
+            || { echo "expected refuted, got '${{ steps.refuted.outputs.verdict }}'"; exit 1; }
+          test "${{ steps.refuted.outputs.refuted-count }}" = "1" \
+            || { echo "expected refuted-count 1, got '${{ steps.refuted.outputs.refuted-count }}'"; exit 1; }
