@@ -1,0 +1,30 @@
+name: Healthcheck v1
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Clean via public @v1
+        id: clean
+        uses: abishekgiri/ciproof-action@v1
+        with:
+          command: check
+          working-directory: test/fixtures/clean
+      - run: test "${{ steps.clean.outputs.verdict }}" = "clean" || exit 1
+      - name: Refuted + comment via public @v1
+        id: refuted
+        uses: abishekgiri/ciproof-action@v1
+        with:
+          command: check
+          working-directory: test/fixtures/refuted
+          fail-on-refuted: false
+          comment: true
+      - run: |
+          test "${{ steps.refuted.outputs.verdict }}" = "refuted" || exit 1
+          test "${{ steps.refuted.outputs.refuted-count }}" = "1" || exit 1
