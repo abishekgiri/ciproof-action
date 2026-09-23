@@ -1,0 +1,22 @@
+# Minimal CIProof check on pull requests and pushes to main.
+# Copy into .github/workflows/ciproof.yml in your repository.
+name: CIProof
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  ciproof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: abishekgiri/ciproof-action@v1
+        with:
+          command: check

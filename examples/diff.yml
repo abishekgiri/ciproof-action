@@ -1,0 +1,23 @@
+# CIProof semantic behavior diff between the PR base and head. This reports how
+# CI behavior changes (paths gained/lost, prerequisites, privilege), not a
+# textual YAML diff. fetch-depth: 0 is required so the base revision is present.
+name: CIProof diff
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  ciproof-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: abishekgiri/ciproof-action@v1
+        with:
+          command: diff
+          revisions: origin/${{ github.base_ref }}...HEAD

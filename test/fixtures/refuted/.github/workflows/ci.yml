@@ -1,0 +1,17 @@
+on:
+  workflow_dispatch:
+    inputs:
+      skip_tests:
+        type: boolean
+jobs:
+  tests:
+    if: ${{ !inputs.skip_tests }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo test
+  deploy:
+    needs: tests
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo deploy
