@@ -229,10 +229,26 @@ Pin `ciproof-version` to an exact version for reproducible analysis.
 - Default permission is `contents: read`; `pull-requests: write` is requested
   only when you enable comments, and the action degrades gracefully without it.
 
+## Feedback
+
+CIProof is in beta and looking for testers. If a result looks wrong or an
+`UNKNOWN` surprises you, please report it:
+
+- **Incorrect result / false counterexample** or **unexpected UNKNOWN** →
+  [issue forms](https://github.com/abishekgiri/ciproof/issues/new/choose) (there
+  are dedicated forms for each).
+- **A missing GitHub Actions feature / semantics request** → the feature-request
+  issue form.
+- **Open-ended feedback or "is this useful?"** → the
+  [beta discussion](https://github.com/abishekgiri/ciproof/discussions/18).
+
+Please remove secrets and private details from any workflow snippet you share.
+
 ## Links
 
 - CIProof CLI: https://github.com/abishekgiri/ciproof
 - CIProof on npm: https://www.npmjs.com/package/ciproof
+- Beta discussion: https://github.com/abishekgiri/ciproof/discussions/18
 
 ## License
 
